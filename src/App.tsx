@@ -8,7 +8,7 @@ import  Grid  from '@material-ui/core/Grid';
 import AddShoopingCartIcon from "@material-ui/icons/AddShoppingCart";
 import Badge from '@material-ui/core/Badge'
 //Styles
-import { Wrapper } from "./App.styles";
+import { StyledButton, Wrapper } from "./App.styles";
 import { isQueryKey } from 'react-query/types/core/utils';
 
 export type CartItemType = {
@@ -30,7 +30,8 @@ const App = () => {
   const {data,isLoading,error} = useQuery<CartItemType[]>('products', getProducts);
   console.log(data);
   
-  const getTotalItems = () => null;
+  const getTotalItems = (items: CartItemType[]) =>
+    items.reduce((ack: number, item)=> ack + item.amount, 0);
 
   const handleAddToCart = (clickedItem:CartItemType) => null;
 
@@ -44,6 +45,11 @@ const App = () => {
       <Drawer anchor='right' open={cartOpen} onClose={() => setCartOpen(false)}  >
         Cart goes here
       </Drawer>
+      <StyledButton onClick={() => setCartOpen(true)}>
+        <Badge badgeContent={getTotalItems(cartItems)} color='error'>
+          <AddShoopingCartIcon/>
+        </Badge>
+      </StyledButton>
       <Grid container spacing={3} >
         {data?.map(item =>(<Grid item key={item.id} xs={12} sm={4}>
             <Item item={item} handleAddToCart={ ()=>handleAddToCart(item)} ></Item>
